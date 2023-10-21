@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "tts-fap"
+version = "0.1.0"
+description = "tts free app"
+authors = ["the_byte_bender <cccefg2@gmail.com>"]
+license = "GPL V3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+wxpython = "^4.2.1"
+pyttsx3 = "^2.90"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
