@@ -10,6 +10,10 @@ class TTSProvider:
         """Will be called when requesting to speak new text. This function should handle speaking the text and it should call the callback given to it when the utterance is complete, passing it True if the text has finished speaking successfully, False if an error prevented it from speaking to completion."""
         raise NotImplementedError()
 
+    def stop(self):
+        """Called when requesting to stop the current speech. The callback given when the speak function is called must be called when the speech is stopped."""
+        raise NotImplementedError()
+
     def save_to_file(
         self, text: str, filepath: str, on_done_callback: on_done_callback_type
     ):

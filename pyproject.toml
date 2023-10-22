@@ -10,6 +10,7 @@ readme = "README.md"
 python = "^3.11"
 wxpython = "^4.2.1"
 pyttsx3 = "^2.90"
+pyaudio = "^0.2.13"
 
 
 [build-system]

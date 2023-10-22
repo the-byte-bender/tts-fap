@@ -1,3 +1,3 @@
-from .provider import TTSProvider
+from .sapi import SAPIProvider
 
-providers = [TTSProvider]
+providers = [SAPIProvider()]
