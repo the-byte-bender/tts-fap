@@ -1,9 +1,14 @@
 import wx
+from .providers.provider import TTSProvider
 
 
 class MainScreen(wx.Frame):
-    def __init__(self, parrent: wx.Window | None = None):
+    def __init__(
+        self, parrent: wx.Window | None = None, tts_providers: list[TTSProvider] = None
+    ):
         super().__init__(parrent, title="TTS Free app")
+        tts_providers = tts_providers or []
+        self.tts_providers = tts_providers
         panel = wx.Panel(self)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.text_input_label = wx.StaticText(panel, label="Your text")
@@ -21,6 +26,12 @@ class MainScreen(wx.Frame):
         self.export_button = wx.Button(panel, label="&Export")
         buttons_sizer.Add(self.export_button, wx.RIGHT)
         main_sizer.Add(buttons_sizer)
+        self.engine_label= wx.StaticText(panel, label="Engine")
+        main_sizer.Add(self.engine_label)
+        self.engine_ctrl= wx.Choice(panel, choices = [i.human_readable_name for i in self.tts_providers])
+        if self.tts_providers:
+            self.engine_ctrl.SetSelection(0)
+        main_sizer.Add(self.engine_ctrl)
         self.voice_label = wx.StaticText(panel, label="Voice")
         main_sizer.Add(self.voice_label)
         self.voice_ctrl = wx.Choice(panel)
