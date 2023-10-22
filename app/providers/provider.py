@@ -5,6 +5,7 @@ on_done_callback_type = Callable[[bool], None]
 
 class TTSProvider:
     human_readable_name: str = "Dummy TTS provider"
+
     def speak(self, text: str, on_done_callback: on_done_callback_type):
         """Will be called when requesting to speak new text. This function should handle speaking the text and it should call the callback given to it when the utterance is complete, passing it True if the text has finished speaking successfully, False if an error prevented it from speaking to completion."""
         raise NotImplementedError()
@@ -41,4 +42,12 @@ class TTSProvider:
 
     def set_voice(self, voice: Any):
         """Sets the current voice. Voice is a valid Voice ID previously returned from get_voices"""
+        raise NotImplementedError()
+
+    def pause(self):
+        """Called when requesting the current speech to be paused"""
+        raise NotImplementedError()
+
+    def resume(self):
+        """Called when requesting the currently paused speech to be resumed"""
         raise NotImplementedError()
