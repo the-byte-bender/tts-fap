@@ -45,19 +45,19 @@ class MainScreen(wx.Frame):
         self.voice_label = wx.StaticText(panel, label="Voice")
         main_sizer.Add(self.voice_label)
         self.voice_ctrl = wx.Choice(panel)
-        #self.voice_ctrl.Bind(wx.EVT_CHOICE, self.on_voice_changed)
+        self.voice_ctrl.Bind(wx.EVT_CHOICE, self.on_voice_changed)
         main_sizer.Add(self.voice_ctrl)
         self.speech_rate_label = wx.StaticText(
             panel, label="Speech rate (words per minute)"
         )
         main_sizer.Add(self.speech_rate_label)
         self.speech_rate_ctrl = wx.SpinCtrl(panel, max=1000, value="200")
-        #self.speech_rate_ctrl.Bind(wx.EVT_SPINCTRL, self.on_speech_rate_changed)
+        self.speech_rate_ctrl.Bind(wx.EVT_SPINCTRL, self.on_speech_rate_changed)
         main_sizer.Add(self.speech_rate_ctrl)
         self.volume_label = wx.StaticText(panel, label="Volume")
         main_sizer.Add(self.volume_label)
         self.volume_ctrl = wx.Slider(panel, value=100)
-        #self.volume_ctrl.Bind(wx.EVT_SLIDER, self.on_volume_changed)
+        self.volume_ctrl.Bind(wx.EVT_SLIDER, self.on_volume_changed)
         main_sizer.Add(self.volume_ctrl)
         self.update_config_from_engine()
         panel.SetSizerAndFit(main_sizer)
@@ -111,4 +111,16 @@ class MainScreen(wx.Frame):
     def on_stop(self, event):
         if self.current_provider is not None:
             self.current_provider.stop()
-    
+    def on_voice_changed(self, event):
+        index = self.voice_ctrl.GetSelection()
+        _, id = self.voices[index]
+        if self.current_provider is not None:
+            self.current_provider.set_voice(id)
+    def on_speech_rate_changed(self, event):
+        value = int(self.speech_rate_ctrl.GetValue())
+        if self.current_provider:
+            self.current_provider.set_rate(value)
+    def on_volume_changed(self, event):
+        value = self.volume_ctrl.GetValue()/100
+        if self.current_provider:
+            self.current_provider.set_volume(value)
