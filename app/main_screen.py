@@ -30,6 +30,7 @@ class MainScreen(wx.Frame):
         self.stop_button.Hide()
         buttons_sizer.Add(self.stop_button)
         self.export_button = wx.Button(panel, label="&Export")
+        self.export_button.Bind(wx.EVT_BUTTON, self.on_export)
         buttons_sizer.Add(self.export_button, wx.RIGHT)
         main_sizer.Add(buttons_sizer)
         self.engine_label = wx.StaticText(panel, label="Engine")
@@ -37,7 +38,7 @@ class MainScreen(wx.Frame):
         self.engine_ctrl = wx.Choice(
             panel, choices=[i.human_readable_name for i in self.tts_providers]
         )
-        #self.engine_ctrl.Bind(wx.EVT_CHOICE, self.on_engine_change)
+        # self.engine_ctrl.Bind(wx.EVT_CHOICE, self.on_engine_change)
         if self.tts_providers:
             self.engine_ctrl.SetSelection(0)
             self.current_provider = self.tts_providers[0]
@@ -88,7 +89,7 @@ class MainScreen(wx.Frame):
     def on_speak(self, event):
         if self.current_provider is None:
             return
-        if self.speech_state== SpeechState.SPEAKING:
+        if self.speech_state == SpeechState.SPEAKING:
             self.current_provider.pause()
             self.speech_state = SpeechState.PAUSED
         elif self.speech_state == SpeechState.PAUSED:
@@ -108,19 +109,36 @@ class MainScreen(wx.Frame):
         play_button_label, show_stopped_button = states[self.speech_state]
         self.play_button.SetLabel(play_button_label)
         self.stop_button.Show(show_stopped_button)
+
     def on_stop(self, event):
         if self.current_provider is not None:
             self.current_provider.stop()
+
     def on_voice_changed(self, event):
         index = self.voice_ctrl.GetSelection()
         _, id = self.voices[index]
         if self.current_provider is not None:
             self.current_provider.set_voice(id)
+
     def on_speech_rate_changed(self, event):
         value = int(self.speech_rate_ctrl.GetValue())
         if self.current_provider:
             self.current_provider.set_rate(value)
+
     def on_volume_changed(self, event):
-        value = self.volume_ctrl.GetValue()/100
+        value = self.volume_ctrl.GetValue() / 100
         if self.current_provider:
             self.current_provider.set_volume(value)
+
+    def on_export(self, event):
+        text = self.text_input_ctrl.GetValue()
+        if text and self.current_provider is not None:
+            with wx.FileDialog(
+                self, "Export to", wildcard="*.wav", style=wx.FD_SAVE
+            ) as fd:
+                if fd.ShowModal() != wx.ID_CANCEL:
+                    path = fd.GetPath()
+                    self.current_provider.save_to_file(text, path, self.on_save_done)
+    def on_save_done(self, success: bool):
+        if not success:
+            wx.MessageBox("Failed to export", "Error")
